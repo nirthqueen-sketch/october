@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>معرض حرب أكتوبر - طلب صورة</title>
+    
+    <!-- خط كايرو -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-dark: #1a2415;
+            --primary-light: #3a572d;
+            --accent-red: #c62828;
+            --gold: #d4af37;
+        }
+        
+        body { 
+            font-family: 'Cairo', sans-serif; 
+            text-align: center; 
+            margin: 0; 
+            padding: 0;
+            background: radial-gradient(circle at center, var(--primary-light) 0%, var(--primary-dark) 100%);
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow-x: hidden;
+        }
+
+        .main-container {
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(15px);
+            border-radius: 25px;
+            padding: 40px 20px;
+            width: 90%;
+            max-width: 650px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            animation: slideUp 1s ease-out;
+        }
+
+        h1 { 
+            font-weight: 900; 
+            font-size: 38px;
+            margin-bottom: 5px; 
+            color: var(--gold); 
+            text-shadow: 2px 2px 5px rgba(0,0,0,0.8); 
+            letter-spacing: 1px;
+        }
+
+        p.subtitle { 
+            font-size: 20px; 
+            margin-bottom: 35px; 
+            color: #e0e0e0; 
+            font-weight: 700;
+        }
+
+        .showcase-gallery {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 40px;
+            height: 220px;
+            position: relative;
+        }
+
+        .showcase-img {
+            width: 140px;
+            height: 190px;
+            object-fit: cover;
+            border-radius: 12px;
+            border: 3px solid var(--gold);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.6);
+            position: absolute;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .img-left { transform: translateX(-80px) rotate(-15deg); z-index: 1; }
+        .img-right { transform: translateX(80px) rotate(15deg); z-index: 1; }
+        .img-center { transform: translateY(-15px) scale(1.1); z-index: 2; box-shadow: 0 15px 30px rgba(0,0,0,0.8); }
+
+        .showcase-gallery:hover .img-left { transform: translateX(-110px) rotate(-20deg); }
+        .showcase-gallery:hover .img-right { transform: translateX(110px) rotate(20deg); }
+        .showcase-gallery:hover .img-center { transform: translateY(-25px) scale(1.15); }
+
+        button { 
+            padding: 15px 50px; 
+            font-size: 26px; 
+            font-family: 'Cairo', sans-serif;
+            font-weight: 900;
+            background: linear-gradient(45deg, var(--accent-red), #ff5252);
+            color: white; 
+            border: none; 
+            border-radius: 50px; 
+            cursor: pointer; 
+            box-shadow: 0 8px 25px rgba(198, 40, 40, 0.6); 
+            transition: all 0.3s;
+            animation: pulse 2s infinite;
+            text-transform: uppercase;
+        }
+
+        button:hover { 
+            transform: translateY(-5px) scale(1.05); 
+            box-shadow: 0 12px 30px rgba(198, 40, 40, 0.8); 
+        }
+
+        button:disabled { 
+            background: #555; 
+            cursor: not-allowed; 
+            animation: none; 
+            transform: scale(1); 
+            box-shadow: none;
+            color: #aaa;
+        }
+
+        #status { 
+            margin-top: 25px; 
+            font-size: 22px; 
+            font-weight: bold; 
+            color: var(--gold); 
+        }
+
+        #result-section {
+            display: none; 
+            flex-direction: column;
+            align-items: center;
+            animation: fadeIn 1s forwards;
+        }
+
+        #result-image { 
+            width: 100%;
+            max-width: 500px;
+            border: 5px solid var(--gold); 
+            border-radius: 15px; 
+            box-shadow: 0 15px 35px rgba(0,0,0,0.7);
+            margin-bottom: 10px;
+        }
+        
+        @keyframes slideUp { from { opacity: 0; transform: translateY(50px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
+        @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(198, 40, 40, 0.7); } 70% { box-shadow: 0 0 0 20px rgba(198, 40, 40, 0); } 100% { box-shadow: 0 0 0 0 rgba(198, 40, 40, 0); } }
+    </style>
+</head>
+<body>
+
+    <div class="main-container">
+        
+        <div id="intro-section">
+            <h1>أبطال أكتوبر</h1>
+            <p class="subtitle">هل ترغب في رؤية نفسك بزي الأبطال؟</p>
+            
+            <div class="showcase-gallery">
+                <img src="https://cdn.phototourl.com/member/2026-10-27-1caab62c-29f3-463a-b9ec-e3780c2b0ca6.jpg" alt="مثال 1" class="showcase-img img-left">
+                <img src="https://cdn.phototourl.com/member/2026-10-27-e36e7c59-05bc-410f-bef9-4c76f8b74a71.jpg" alt="مثال 3" class="showcase-img img-right">
+                <img src="https://cdn.phototourl.com/member/2026-10-27-1633d9d4-4243-454c-a060-aff597a2bd31.jpg" alt="مثال 2" class="showcase-img img-center">
+            </div>
+
+            <button id="requestBtn">اصنع صورتك الآن</button>
+            <div id="status"></div>
+        </div>
+
+        <div id="result-section">
+            <h2 style="color: var(--gold); font-size: 28px; margin-bottom: 20px;">اكتملت مهمتك بنجاح!</h2>
+            <img id="result-image" src="" alt="صورتك كجندي">
+        </div>
+
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-app.js";
+        import { getFirestore, collection, addDoc, onSnapshot, doc } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyA2BPw21dRqMELrKpjgnLitrrRK2Rh2Vxg",
+            authDomain: "october-war-gallery.firebaseapp.com",
+            projectId: "october-war-gallery",
+            messagingSenderId: "288988782524",
+            appId: "1:288988782524:web:d4b92a94d27e3a4c2495b9",
+            measurementId: "G-F1FNTSX7GF"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        const requestBtn = document.getElementById('requestBtn');
+        const statusDiv = document.getElementById('status');
+        const introSection = document.getElementById('intro-section');
+        const resultSection = document.getElementById('result-section');
+
+        requestBtn.addEventListener('click', async () => {
+            try {
+                statusDiv.innerText = "جاري تحضير الكاميرا... يرجى الوقوف أمام اللابتوب 🎯";
+                requestBtn.disabled = true;
+
+                const docRef = await addDoc(collection(db, "requests"), {
+                    status: "waiting",
+                    timestamp: new Date()
+                });
+
+                onSnapshot(doc(db, "requests", docRef.id), (snapshot) => {
+                    const data = snapshot.data();
+                    
+                    if (data && data.status === "completed") {
+                        introSection.style.display = "none";
+                        resultSection.style.display = "flex";
+                        
+                        const img = document.getElementById('result-image');
+                        img.src = data.imageUrl; 
+                    }
+                });
+
+            } catch (e) {
+                console.error("Error: ", e);
+                statusDiv.innerText = "حدث خطأ في الاتصال، يرجى المحاولة مرة أخرى.";
+                requestBtn.disabled = false;
+            }
+        });
+    </script>
+</body>
+</html>

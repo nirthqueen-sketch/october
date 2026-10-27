@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة التحكم المركزية - معرض أكتوبر</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-dark: #1a2415;
+            --primary-light: #3a572d;
+            --accent-red: #c62828;
+            --gold: #d4af37;
+        }
+
+        body { 
+            font-family: 'Cairo', sans-serif; 
+            background: linear-gradient(135deg, #121a0f 0%, #2b4121 100%);
+            color: white;
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        header {
+            text-align: center;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(10px);
+            padding: 20px;
+            border-radius: 15px;
+            border: 2px solid var(--gold);
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        h1 { margin: 0; color: var(--gold); font-size: 30px; }
+        #status { color: #e0e0e0; font-size: 18px; margin-top: 5px; font-weight: bold; }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .request-card { 
+            background: rgba(255, 255, 255, 0.08); 
+            backdrop-filter: blur(10px);
+            padding: 25px; 
+            margin-bottom: 20px; 
+            border-radius: 15px; 
+            box-shadow: 0 8px 25px rgba(0,0,0,0.4); 
+            border-right: 8px solid var(--gold);
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        .request-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: 10px;
+        }
+
+        .request-id { font-weight: bold; color: var(--gold); font-size: 18px; }
+
+        input[type="file"] { 
+            background: rgba(0,0,0,0.3);
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px dashed var(--gold);
+            color: white;
+            cursor: pointer;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        button { 
+            padding: 12px 30px; 
+            background: linear-gradient(45deg, #2e7d32, #4caf50); 
+            color: white; 
+            border: none; 
+            border-radius: 50px; 
+            cursor: pointer; 
+            font-family: 'Cairo', sans-serif;
+            font-weight: bold;
+            font-size: 18px;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(46, 125, 50, 0.4);
+            align-self: flex-start;
+        }
+
+        button:hover { 
+            background: linear-gradient(45deg, #1b5e20, #2e7d32); 
+            transform: translateY(-2px);
+        }
+
+        .msg { font-weight: bold; font-size: 16px; margin: 0; }
+
+        .no-requests {
+            text-align: center;
+            font-size: 22px;
+            color: #aaa;
+            margin-top: 50px;
+            background: rgba(0,0,0,0.2);
+            padding: 40px;
+            border-radius: 15px;
+        }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>🎖️ لوحة تحكم أبطال أكتوبر 🎖️</h1>
+        <div id="status">جاري الاتصال بالنظام واستقبال الطلبات...</div>
+    </header>
+
+    <div class="container" id="requests-container">
+        <!-- الطلبات هتظهر هنا تلقائياً -->
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-app.js";
+        import { getFirestore, collection, onSnapshot, doc, updateDoc, query, where } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyA2BPw21dRqMELrKpjgnLitrrRK2Rh2Vxg",
+            authDomain: "october-war-gallery.firebaseapp.com",
+            projectId: "october-war-gallery",
+            messagingSenderId: "288988782524",
+            appId: "1:288988782524:web:d4b92a94d27e3a4c2495b9",
+            measurementId: "G-F1FNTSX7GF"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        
+        const container = document.getElementById('requests-container');
+        const statusText = document.getElementById('status');
+
+        const q = query(collection(db, "requests"), where("status", "==", "waiting"));
+        
+        onSnapshot(q, (snapshot) => {
+            container.innerHTML = ""; 
+            const count = snapshot.docs.length;
+            
+            if (count === 0) {
+                statusText.innerText = "لا توجد طلبات معلقة حالياً 🟢";
+                container.innerHTML = `<div class="no-requests">في انتظار طلبات الزوار الجدد من التابلت... 🎯</div>`;
+                return;
+            }
+
+            statusText.innerText = `⚠️ تنبيه: يوجد ${count} طلبات بانتظار تعديل الصور ورفعها!`;
+
+            snapshot.forEach((docSnap) => {
+                const reqId = docSnap.id;
+                
+                const card = document.createElement('div');
+                card.className = "request-card";
+                card.innerHTML = `
+                    <div class="request-header">
+                        <span class="request-id">طلب جديد رقم: #${reqId.substring(0, 6)}</span>
+                        <span style="color: #ffeb3b; font-size: 14px;">قيد الانتظار ⏳</span>
+                    </div>
+                    <p style="margin:0; color: #ddd;">قم بتعديل صورة الزائر بزي الجندي، ثم ارفعها هنا:</p>
+                    <input type="file" id="file-${reqId}" accept="image/*">
+                    <button id="btn-${reqId}">🚀 رفع وإرسال للزائر</button>
+                    <p id="msg-${reqId}" class="msg"></p>
+                `;
+                container.appendChild(card);
+
+                document.getElementById(`btn-${reqId}`).addEventListener('click', async () => {
+                    const fileInput = document.getElementById(`file-${reqId}`);
+                    const msg = document.getElementById(`msg-${reqId}`);
+                    const file = fileInput.files[0];
+
+                    if (!file) {
+                        msg.innerText = "الرجاء اختيار الصورة المعدلة أولاً!";
+                        msg.style.color = "#ff5252";
+                        return;
+                    }
+
+                    const reader = new FileReader();
+                    reader.onload = async function(event) {
+                        const base64Image = event.target.result;
+                        
+                        try {
+                            msg.innerText = "جاري إرسال الصورة للتابلت... 🔄";
+                            msg.style.color = "#ffeb3b";
+
+                            await updateDoc(doc(db, "requests", reqId), {
+                                status: "completed",
+                                imageUrl: base64Image
+                            });
+
+                            msg.innerText = "✅ تم إرسال الصورة بنجاح وظهرت للزائر!";
+                            msg.style.color = "#69f0ae";
+                        } catch (error) {
+                            console.error("خطأ:", error);
+                            msg.innerText = "❌ حدث خطأ أثناء الإرسال، حاول مرة أخرى.";
+                            msg.style.color = "#ff5252";
+                        }
+                    };
+                    reader.readAsDataURL(file);
+                });
+            });
+        });
+    </script>
+</body>
+</html>
